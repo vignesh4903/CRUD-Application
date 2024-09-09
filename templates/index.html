@@ -4,155 +4,91 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Table</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f4f4f9;
-            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
         }
-
-        h2 {
-            color: #333;
-        }
-
         table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            background-color: #ffffff;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
         }
-
-        table, th, td {
-            border: 1px solid #ddd;
+        .container {
+            margin-top: 20px;
         }
-
-        th, td {
-            padding: 12px;
-            text-align: center;
-        }
-
-        th {
-            background-color: #007bff;
-            color: white;
-        }
-
-        td {
-            background-color: #ffffff;
-        }
-
-        tr:nth-child(even) td {
-            background-color: #f9f9f9;
-        }
-
-        tr:hover td {
-            background-color: #f1f1f1;
-        }
-
-        form input[type="submit"] {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        form input[type="submit"]:hover {
-            background-color: #218838;
-        }
-
-        #editForm {
-            margin: 20px 0;
-            padding: 20px;
-            background-color: #ffffff;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-        }
-
-        #editForm h2 {
-            color: #333;
-        }
-
-        #editForm label {
-            display: block;
-            margin-bottom: 5px;
-            color: #333;
-        }
-
-        #editForm input[type="text"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-
-        #editForm input[type="submit"] {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        #editForm input[type="submit"]:hover {
-            background-color: #0056b3;
+        .form-container {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h2>Employee Table</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>EID</th>
-                <th>NAME</th>
-                <th>ROLE</th>
-                <th>BRANCH</th>
-                <th>SALARY</th>
-                <th>Edit</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for i in employees %}
-            <tr>
-                <td>{{ i[0] }}</td>
-                <td>{{ i[1] }}</td>
-                <td>{{ i[2] }}</td>
-                <td>{{ i[3] }}</td>
-                <td>{{ i[4] }}</td>
-                <td>
-                    <form action="{{ url_for('edit_employee') }}" method="POST">
-                        <input type="hidden" name="eid" value="{{ i[0] }}">
-                        <input type="submit" value="Edit">
-                    </form>
-                </td>
-                <td>
-                    <form action="{{ url_for('delete_employee') }}" method="POST">
-                        <input type="hidden" name="eid" value="{{ i[0] }}">
-                        <input type="submit" value="Delete">
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <div id="editForm">
-        <h2>Edit Employee</h2>
-        <form id="editEmployeeForm" action="{{ url_for('update_employee') }}" method="POST">
-            <input type="hidden" id="editEID" name="eid" value="{{ selected_employee.eid if selected_employee else '' }}">
-            <label for="editName">Name:</label>
-            <input type="text" id="editName" name="name" value="{{ selected_employee.name if selected_employee else '' }}"><br>
-            <label for="editRole">Role:</label>
-            <input type="text" id="editRole" name="role" value="{{ selected_employee.role if selected_employee else '' }}"><br>
-            <label for="editBranch">Branch:</label>
-            <input type="text" id="editBranch" name="branch" value="{{ selected_employee.branch if selected_employee else '' }}"><br>
-            <label for="editSalary">Salary:</label>
-            <input type="text" id="editSalary" name="salary" value="{{ selected_employee.salary if selected_employee else '' }}"><br>
-            <input type="submit" value="Update">
-        </form>
+    <div class="container">
+        <h2 class="text-center">Employee Table</h2>
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>EID</th>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Branch</th>
+                    <th>Salary</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in employees %}
+                <tr>
+                    <td>{{ i[0] }}</td>
+                    <td>{{ i[1] }}</td>
+                    <td>{{ i[2] }}</td>
+                    <td>{{ i[3] }}</td>
+                    <td>{{ i[4] }}</td>
+                    <td>
+                        <form action="{{ url_for('edit_employee') }}" method="POST" style="display:inline;">
+                            <input type="hidden" name="eid" value="{{ i[0] }}">
+                            <button type="submit" class="btn btn-primary">Edit</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="{{ url_for('delete_employee') }}" method="POST" style="display:inline;">
+                            <input type="hidden" name="eid" value="{{ i[0] }}">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        {% if selected_employee %}
+        <div class="form-container">
+            <h2>Edit Employee</h2>
+            <form action="{{ url_for('update_employee') }}" method="POST">
+                <input type="hidden" name="eid" value="{{ selected_employee['eid'] }}">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" class="form-control" value="{{ selected_employee['name'] }}">
+                </div>
+                <div class="form-group">
+                    <label for="role">Role:</label>
+                    <input type="text" id="role" name="role" class="form-control" value="{{ selected_employee['role'] }}">
+                </div>
+                <div class="form-group">
+                    <label for="branch">Branch:</label>
+                    <input type="text" id="branch" name="branch" class="form-control" value="{{ selected_employee['branch'] }}">
+                </div>
+                <div class="form-group">
+                    <label for="salary">Salary:</label>
+                    <input type="text" id="salary" name="salary" class="form-control" value="{{ selected_employee['salary'] }}">
+                </div>
+                <button type="submit" class="btn btn-success">Update</button>
+            </form>
+        </div>
+        {% endif %}
     </div>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
