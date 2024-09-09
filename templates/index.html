@@ -5,82 +5,154 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Table</title>
     <style>
+        body {
+            background-color: #f4f4f9;
+            font-family: Arial, sans-serif;
+        }
+
+        h2 {
+            color: #333;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #ffffff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         }
+
         table, th, td {
-            border: 1px solid black;
+            border: 1px solid #ddd;
         }
+
         th, td {
-            padding: 10px;
+            padding: 12px;
             text-align: center;
         }
+
         th {
-            background-color: #f2f2f2;
+            background-color: #007bff;
+            color: white;
         }
-        body {
-            background-color: lightgrey;
-            font-family: Arial, sans-serif;
+
+        td {
+            background-color: #ffffff;
         }
-        .form-container {
-            margin-top: 20px;
+
+        tr:nth-child(even) td {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover td {
+            background-color: #f1f1f1;
+        }
+
+        form input[type="submit"] {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        form input[type="submit"]:hover {
+            background-color: #218838;
+        }
+
+        #editForm {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        #editForm h2 {
+            color: #333;
+        }
+
+        #editForm label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        #editForm input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        #editForm input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        #editForm input[type="submit"]:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-<h2>Employee Table</h2>
-<table>
-    <thead>
-        <tr>
-            <th class="header">EID</th>
-            <th>NAME</th>
-            <th>ROLE</th>
-            <th>BRANCH</th>
-            <th>SALARY</th>
-            <th>Edit</th>
-            <th>Delete</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for i in employees %}
-        <tr>
-            <td>{{ i[0] }}</td>
-            <td>{{ i[1] }}</td>
-            <td>{{ i[2] }}</td>
-            <td>{{ i[3] }}</td>
-            <td>{{ i[4] }}</td>
-            <td>
-                <form action="{{ url_for('edit_employee') }}" method="POST">
-                    <input type="hidden" name="eid" value="{{ i[0] }}">
-                    <button type="submit">Edit</button>
-                </form>
-            </td>
-            <td>
-                <form action="{{ url_for('delete_employee') }}" method="POST">
-                    <input type="hidden" name="eid" value="{{ i[0] }}">
-                    <button type="submit">Delete</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<div class="form-container">
-    <h2>Edit Employee</h2>
-    <form id="editEmployeeForm" action="{{ url_for('update_employee') }}" method="POST">
-        <input type="hidden" id="editEID" name="eid" value="{{ selected_employee.eid if selected_employee else '' }}">
-        <label for="editName">Name:</label>
-        <input type="text" id="editName" name="name" value="{{ selected_employee.name if selected_employee else '' }}"><br><br>
-        <label for="editRole">Role:</label>
-        <input type="text" id="editRole" name="role" value="{{ selected_employee.role if selected_employee else '' }}"><br><br>
-        <label for="editBranch">Branch:</label>
-        <input type="text" id="editBranch" name="branch" value="{{ selected_employee.branch if selected_employee else '' }}"><br><br>
-        <label for="editSalary">Salary:</label>
-        <input type="text" id="editSalary" name="salary" value="{{ selected_employee.salary if selected_employee else '' }}"><br><br>
-        <input type="submit" value="Update">
-    </form>
-</div>
+    <h2>Employee Table</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>EID</th>
+                <th>NAME</th>
+                <th>ROLE</th>
+                <th>BRANCH</th>
+                <th>SALARY</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in employees %}
+            <tr>
+                <td>{{ i[0] }}</td>
+                <td>{{ i[1] }}</td>
+                <td>{{ i[2] }}</td>
+                <td>{{ i[3] }}</td>
+                <td>{{ i[4] }}</td>
+                <td>
+                    <form action="{{ url_for('edit_employee') }}" method="POST">
+                        <input type="hidden" name="eid" value="{{ i[0] }}">
+                        <input type="submit" value="Edit">
+                    </form>
+                </td>
+                <td>
+                    <form action="{{ url_for('delete_employee') }}" method="POST">
+                        <input type="hidden" name="eid" value="{{ i[0] }}">
+                        <input type="submit" value="Delete">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div id="editForm">
+        <h2>Edit Employee</h2>
+        <form id="editEmployeeForm" action="{{ url_for('update_employee') }}" method="POST">
+            <input type="hidden" id="editEID" name="eid" value="{{ selected_employee.eid if selected_employee else '' }}">
+            <label for="editName">Name:</label>
+            <input type="text" id="editName" name="name" value="{{ selected_employee.name if selected_employee else '' }}"><br>
+            <label for="editRole">Role:</label>
+            <input type="text" id="editRole" name="role" value="{{ selected_employee.role if selected_employee else '' }}"><br>
+            <label for="editBranch">Branch:</label>
+            <input type="text" id="editBranch" name="branch" value="{{ selected_employee.branch if selected_employee else '' }}"><br>
+            <label for="editSalary">Salary:</label>
+            <input type="text" id="editSalary" name="salary" value="{{ selected_employee.salary if selected_employee else '' }}"><br>
+            <input type="submit" value="Update">
+        </form>
+    </div>
 </body>
 </html>

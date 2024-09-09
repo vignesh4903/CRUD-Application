@@ -15,9 +15,9 @@ def index():
     cursor = db.cursor()
     cursor.execute("SELECT EID, NAME, ROLE, BRANCH, SALARY FROM et_1")
     employees = cursor.fetchall()
-    return render_template('index.html', employees=employees)
+    return render_template('index.html', employees=employees, selected_employee=None)
 
-@app.route('/edit', methods=['POST'])
+@app.route('/edit_employee', methods=['POST'])
 def edit_employee():
     eid = request.form.get('eid')
     cursor = db.cursor()
@@ -31,7 +31,9 @@ def edit_employee():
             'branch': employee[3],
             'salary': employee[4]
         }
-        return render_template('index.html', employees=[employee], selected_employee=selected_employee)
+        cursor.execute("SELECT EID, NAME, ROLE, BRANCH, SALARY FROM et_1")
+        employees = cursor.fetchall()
+        return render_template('index.html', employees=employees, selected_employee=selected_employee)
     return redirect(url_for('index'))
 
 @app.route('/update_employee', methods=['POST'])
