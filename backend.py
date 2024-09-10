@@ -44,9 +44,8 @@ def update_employee():
     branch = request.form.get('branch')
     salary = request.form.get('salary')
 
-    # Check if all required fields are present
     if not all([eid, name, role, branch, salary]):
-        return redirect(url_for('index'))  # Redirect if any field is missing
+        return redirect(url_for('index')) 
 
     cursor = db.cursor()
     cursor.execute("""
@@ -62,7 +61,7 @@ def update_employee():
 def delete_employee():
     eid = request.form.get('eid')
     if not eid:
-        return redirect(url_for('index'))  # Redirect if ID is missing
+        return redirect(url_for('index'))
 
     cursor = db.cursor()
     query = "DELETE FROM et_1 WHERE EID = %s"
