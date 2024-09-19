@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Table with Default Profile Icon</title>
+    <title>Employee Table</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -46,8 +46,7 @@
                 {% for i in employees %}
                 <tr>
                     <td>
-                        <!-- Correct image link -->
-                        <img src="{{ url_for('static', filename='images/images.png') }}" alt="Profile Icon" class="profile-img">
+                        <img src="{{ url_for('static', filename='images/' + (i[5] if i[5] else 'default_profile.png')) }}" alt="Profile Icon" class="profile-img">
                     </td>
                     <td>{{ i[0] }}</td>
                     <td>{{ i[1] }}</td>
@@ -74,7 +73,7 @@
         {% if selected_employee %}
         <div class="form-container">
             <h2>Edit Employee</h2>
-            <form action="{{ url_for('update_employee') }}" method="POST">
+            <form action="{{ url_for('update_employee') }}" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="eid" value="{{ selected_employee['eid'] }}">
                 <div class="form-group">
                     <label for="name">Name:</label>
@@ -91,6 +90,10 @@
                 <div class="form-group">
                     <label for="salary">Salary:</label>
                     <input type="text" id="salary" name="salary" class="form-control" value="{{ selected_employee['salary'] }}">
+                </div>
+                <div class="form-group">
+                    <label for="profile_picture">Profile Picture:</label>
+                    <input type="file" id="profile_picture" name="profile_picture" class="form-control">
                 </div>
                 <button type="submit" class="btn btn-success">Update</button>
             </form>

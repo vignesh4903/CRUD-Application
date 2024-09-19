@@ -1,10 +1,17 @@
 from flask import Flask, request, render_template, redirect, url_for, session
 import mysql.connector
+import os
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__, static_folder='static')
 
 app.secret_key = 'your_secret_key'  
 
+UPLOAD_FOLDER = 'static/images'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Database connection
 db = mysql.connector.connect(
     host='localhost',
     user='root',
@@ -12,12 +19,15 @@ db = mysql.connector.connect(
     database='employee_info'
 )
 
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 @app.route('/')
 def index():
     if 'username' not in session:
         return redirect(url_for('login'))
     cursor = db.cursor()
-    cursor.execute("SELECT EID, NAME, ROLE, BRANCH, SALARY FROM et_1")
+    cursor.execute("SELECT EID, NAME, ROLE, BRANCH, SALARY, profile_picture FROM et_1")
     employees = cursor.fetchall()
     return render_template('index.html', employees=employees, selected_employee=None)
 
@@ -25,7 +35,7 @@ def index():
 def edit_employee():
     eid = request.form.get('eid')
     cursor = db.cursor()
-    cursor.execute("SELECT EID, NAME, ROLE, BRANCH, SALARY FROM et_1 WHERE EID = %s", (eid,))
+    cursor.execute("SELECT EID, NAME, ROLE, BRANCH, SALARY, profile_picture FROM et_1 WHERE EID = %s", (eid,))
     employee = cursor.fetchone()
     if employee:
         selected_employee = {
@@ -33,9 +43,10 @@ def edit_employee():
             'name': employee[1],
             'role': employee[2],
             'branch': employee[3],
-            'salary': employee[4]
+            'salary': employee[4],
+            'profile_picture': employee[5] if employee[5] else 'default_profile.png'
         }
-        cursor.execute("SELECT EID, NAME, ROLE, BRANCH, SALARY FROM et_1")
+        cursor.execute("SELECT EID, NAME, ROLE, BRANCH, SALARY, profile_picture FROM et_1")
         employees = cursor.fetchall()
         return render_template('index.html', employees=employees, selected_employee=selected_employee)
     return redirect(url_for('index'))
@@ -48,22 +59,28 @@ def update_employee():
     branch = request.form.get('branch')
     salary = request.form.get('salary')
 
-    if not all([eid, name, role, branch, salary]):
-        return redirect(url_for('index')) 
+    # Handle profile picture upload
+    profile_picture = request.files.get('profile_picture')
+    if profile_picture and allowed_file(profile_picture.filename):
+        filename = secure_filename(profile_picture.filename)
+        profile_picture.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        picture_path = filename
+    else:
+        cursor = db.cursor()
+        cursor.execute("SELECT profile_picture FROM et_1 WHERE EID = %s", (eid,))
+        current_picture = cursor.fetchone()[0]
+        picture_path = current_picture if current_picture else 'default_profile.png'
 
     cursor = db.cursor()
     cursor.execute("""UPDATE et_1
-                      SET NAME = %s, ROLE = %s, BRANCH = %s, SALARY = %s 
-                      WHERE EID = %s""", (name, role, branch, salary, eid))
+                      SET NAME = %s, ROLE = %s, BRANCH = %s, SALARY = %s, profile_picture = %s 
+                      WHERE EID = %s""", (name, role, branch, salary, picture_path, eid))
     db.commit()
     return redirect(url_for('index'))
 
-@app.route('/delete', methods=['POST'])
+@app.route('/delete_employee', methods=['POST'])
 def delete_employee():
     eid = request.form.get('eid')
-    if not eid:
-        return redirect(url_for('index'))
-
     cursor = db.cursor()
     cursor.execute("DELETE FROM et_1 WHERE EID = %s", (eid,))
     db.commit()
