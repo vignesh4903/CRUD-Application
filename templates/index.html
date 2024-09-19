@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Table</title>
+    <title>Employee Table with Default Profile Icon</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -18,6 +18,11 @@
         .form-container {
             margin-top: 20px;
         }
+        .profile-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
     </style>
 </head>
 <body>
@@ -27,6 +32,7 @@
         <table class="table table-striped table-bordered">
             <thead>
                 <tr>
+                    <th>PROFILE</th>
                     <th>EID</th>
                     <th>NAME</th>
                     <th>ROLE</th>
@@ -39,6 +45,10 @@
             <tbody>
                 {% for i in employees %}
                 <tr>
+                    <td>
+                        <!-- Correct image link -->
+                        <img src="{{ url_for('static', filename='images/images.png') }}" alt="Profile Icon" class="profile-img">
+                    </td>
                     <td>{{ i[0] }}</td>
                     <td>{{ i[1] }}</td>
                     <td>{{ i[2] }}</td>
