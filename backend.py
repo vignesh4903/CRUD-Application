@@ -11,7 +11,6 @@ UPLOAD_FOLDER = 'static/images'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Database connection
 db = mysql.connector.connect(
     host='localhost',
     user='root',
@@ -59,7 +58,7 @@ def update_employee():
     branch = request.form.get('branch')
     salary = request.form.get('salary')
 
-    # Handle profile picture upload
+    
     profile_picture = request.files.get('profile_picture')
     if profile_picture and allowed_file(profile_picture.filename):
         filename = secure_filename(profile_picture.filename)
